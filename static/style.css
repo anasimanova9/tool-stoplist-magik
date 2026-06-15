@@ -37,3 +37,11 @@ body {
     border-bottom: 1px solid #eee;
     word-break: break-all;
 }
+
+.app-footer {
+    background-color: #ffffff;
+    font-size: 0.85rem;
+}
+.app-footer .bi-shield-check {
+    color: #198754;
+}

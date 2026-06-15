@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+{% block title %}Бренди — Стоп-лист донорів{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-tags"></i> Визначення брендів (TitleKW)</h2>
+
+<div class="alert alert-info small">
+    <i class="bi bi-info-circle"></i>
+    Ця функція окрема від стоп-листа. Завантажте ТЗ — тул витягне колонку <strong>TitleKW</strong> з аркуша "ТЗ"
+    і автоматично згрупує схожі назви в бренди (Pin Up / PinUP / pin-up = один бренд).
+</div>
+
+<!-- Таби імпорту -->
+<ul class="nav nav-tabs mb-4" id="brandImportTabs">
+    <li class="nav-item">
+        <a class="nav-link active" data-bs-toggle="tab" href="#brandTabUrls">
+            <i class="bi bi-link-45deg"></i> Посилання
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#brandTabFiles">
+            <i class="bi bi-file-earmark-excel"></i> Файли
+        </a>
+    </li>
+</ul>
+
+<div class="tab-content mb-4">
+    <div class="tab-pane fade show active" id="brandTabUrls">
+        <div class="card">
+            <div class="card-body">
+                <textarea class="form-control mb-2" id="brandUrlsInput" rows="5"
+                    placeholder="Вставте посилання на Google Sheets (по одному на рядок)..."></textarea>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="brandIsMaster">
+                    <label class="form-check-label" for="brandIsMaster">Це майстер-таблиця</label>
+                </div>
+                <button class="btn btn-primary" id="btnBrandImportUrls" onclick="startBrandImportUrls()">
+                    <i class="bi bi-play-fill"></i> Почати
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="brandTabFiles">
+        <div class="card">
+            <div class="card-body">
+                <input class="form-control mb-2" type="file" id="brandFileInput" multiple accept=".xlsx,.xls">
+                <button class="btn btn-primary" id="btnBrandImportFiles" onclick="startBrandImportFiles()">
+                    <i class="bi bi-play-fill"></i> Завантажити
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Прогрес -->
+<div class="card mb-4 d-none" id="brandProgressCard">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0"><i class="bi bi-hourglass-split"></i> Прогрес</h5>
+            <button class="btn btn-danger btn-sm" onclick="cancelImport()">
+                <i class="bi bi-x-circle"></i> Скасувати
+            </button>
+        </div>
+        <div class="progress mb-2" style="height: 25px;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated bg-info"
+                 id="brandProgressBar" role="progressbar" style="width: 0%">0%</div>
+        </div>
+        <p class="text-muted" id="brandProgressText">Підготовка...</p>
+        <p class="text-muted small" id="brandProgressCurrent"></p>
+    </div>
+</div>
+
+<!-- Статистика -->
+<div class="row g-4 mb-4" id="brandStatsRow">
+    <div class="col-md-3">
+        <div class="card stat-card border-primary">
+            <div class="card-body text-center">
+                <h3 class="text-primary" id="bstat-groups">0</h3>
+                <p class="text-muted mb-0">Унікальних брендів</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card border-success">
+            <div class="card-body text-center">
+                <h3 class="text-success" id="bstat-norm">0</h3>
+                <p class="text-muted mb-0">Варіацій назв</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card border-info">
+            <div class="card-body text-center">
+                <h3 class="text-info" id="bstat-raw">0</h3>
+                <p class="text-muted mb-0">Всього згадувань</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card border-secondary">
+            <div class="card-body text-center">
+                <h3 class="text-secondary" id="bstat-tz">0</h3>
+                <p class="text-muted mb-0">Оброблено ТЗ</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Таблиця брендів -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Згруповані бренди</h5>
+        <div>
+            <a href="/api/brands/export" class="btn btn-sm btn-success me-2">
+                <i class="bi bi-file-earmark-excel"></i> Вивантажити в Excel
+            </a>
+            <button class="btn btn-sm btn-outline-danger" onclick="clearBrands()">
+                <i class="bi bi-trash"></i> Очистити
+            </button>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+            <table class="table table-hover mb-0">
+                <thead class="table-dark sticky-top">
+                    <tr>
+                        <th>#</th>
+                        <th>Бренд</th>
+                        <th>Згадувань</th>
+                        <th>Варіації назв</th>
+                    </tr>
+                </thead>
+                <tbody id="brandsTableBody">
+                    <tr><td colspan="4" class="text-center text-muted">Завантажте ТЗ щоб побачити бренди</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', loadBrandData);
+
+function startBrandImportUrls() {
+    const text = document.getElementById('brandUrlsInput').value.trim();
+    if (!text) { alert('Вставте посилання!'); return; }
+    const urls = text.split('\n').map(u => u.trim()).filter(u => u.length > 0);
+    const isMaster = document.getElementById('brandIsMaster').checked;
+
+    fetch('/api/brands/import/urls', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({urls, is_master: isMaster})
+    }).then(r => r.json()).then(data => {
+        if (data.error) { alert(data.error); return; }
+        showBrandProgress();
+        pollBrandProgress();
+    });
+}
+
+function startBrandImportFiles() {
+    const input = document.getElementById('brandFileInput');
+    if (!input.files.length) { alert('Виберіть файли!'); return; }
+    const formData = new FormData();
+    for (const file of input.files) formData.append('files', file);
+
+    fetch('/api/brands/import/files', {method: 'POST', body: formData})
+    .then(r => r.json()).then(data => {
+        if (data.error) { alert(data.error); return; }
+        showBrandProgress();
+        pollBrandProgress();
+    });
+}
+
+function showBrandProgress() {
+    document.getElementById('brandProgressCard').classList.remove('d-none');
+}
+
+function pollBrandProgress() {
+    const interval = setInterval(() => {
+        fetch('/api/import/progress').then(r => r.json()).then(data => {
+            const bar = document.getElementById('brandProgressBar');
+            const pct = data.total > 0 ? Math.round((data.processed / data.total) * 100) : 0;
+            bar.style.width = pct + '%';
+            bar.textContent = pct + '%';
+            document.getElementById('brandProgressText').textContent =
+                `Оброблено: ${data.processed} з ${data.total}`;
+            document.getElementById('brandProgressCurrent').textContent = data.current_item || '';
+
+            if (!data.running) {
+                clearInterval(interval);
+                bar.classList.remove('progress-bar-animated');
+                loadBrandData();
+            }
+        });
+    }, 1500);
+}
+
+function loadBrandData() {
+    fetch('/api/brands/stats').then(r => r.json()).then(data => {
+        document.getElementById('bstat-groups').textContent = data.total_groups.toLocaleString();
+        document.getElementById('bstat-norm').textContent = data.total_unique_normalized.toLocaleString();
+        document.getElementById('bstat-raw').textContent = data.total_raw.toLocaleString();
+        document.getElementById('bstat-tz').textContent = data.total_tz.toLocaleString();
+    });
+
+    fetch('/api/brands/groups').then(r => r.json()).then(data => {
+        const tbody = document.getElementById('brandsTableBody');
+        if (!data.length) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Немає даних</td></tr>';
+            return;
+        }
+        tbody.innerHTML = data.map((b, i) => `
+            <tr>
+                <td class="text-muted">${i + 1}</td>
+                <td><strong>${escapeHtml(b.brand_name)}</strong></td>
+                <td>${b.total_mentions}</td>
+                <td class="small text-muted">${escapeHtml(b.variations || '')}</td>
+            </tr>
+        `).join('');
+    });
+}
+
+function clearBrands() {
+    if (!confirm('Очистити всі дані брендів?')) return;
+    fetch('/api/brands/clear', {method: 'POST'}).then(() => loadBrandData());
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+</script>
+{% endblock %}

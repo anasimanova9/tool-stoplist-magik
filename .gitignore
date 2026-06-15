@@ -1,0 +1,28 @@
+# --- Дані / великі файли (НЕ заливати на GitHub) ---
+stoplist.db
+*.db
+*.sqlite
+*.sqlite3
+
+# Експортовані Excel-файли
+exports/
+*.xlsx
+
+# Завантажені користувачем файли
+uploads/
+
+# --- Python ---
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# --- IDE / ОС ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log

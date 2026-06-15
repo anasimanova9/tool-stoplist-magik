@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Стоп-лист — Стоп-лист донорів{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-list-check"></i> Стоп-лист донорів</h2>
+
+<!-- Пошук -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" id="searchInput"
+                   placeholder="Пошук за акцептором (домен)..."
+                   onkeyup="if(event.key==='Enter') loadAcceptors(1)">
+            <button class="btn btn-primary" onclick="loadAcceptors(1)">Знайти</button>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <select class="form-select" id="sortBy" onchange="loadAcceptors(1)">
+            <option value="unique_donors">За кількістю донорів</option>
+            <option value="acceptor">За назвою</option>
+            <option value="total_entries">За загальною кількістю</option>
+            <option value="duplicates">За кількістю дублів</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select class="form-select" id="sortDir" onchange="loadAcceptors(1)">
+            <option value="desc">За спаданням</option>
+            <option value="asc">За зростанням</option>
+        </select>
+    </div>
+</div>
+
+<!-- Таблиця -->
+<div class="table-responsive">
+    <table class="table table-hover" id="acceptorsTable">
+        <thead class="table-dark">
+            <tr>
+                <th style="width: 40px;">#</th>
+                <th>Акцептор</th>
+                <th>Унікальних донорів</th>
+                <th>Всього записів</th>
+                <th>Дублікатів</th>
+                <th style="width: 100px;">Дії</th>
+            </tr>
+        </thead>
+        <tbody id="acceptorsBody">
+            <tr><td colspan="6" class="text-center text-muted">Завантаження...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Пагінація -->
+<nav id="paginationNav" class="d-none">
+    <ul class="pagination justify-content-center" id="pagination"></ul>
+</nav>
+
+<!-- Модальне вікно з донорами -->
+<div class="modal fade" id="donorsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Донори для: <span id="modalAcceptor" class="text-primary"></span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">Всього донорів: <strong id="modalTotal">0</strong></p>
+                <div id="donorsList" style="max-height: 500px; overflow-y: auto;">
+                </div>
+                <nav class="mt-3">
+                    <ul class="pagination pagination-sm justify-content-center" id="donorsPagination"></ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => loadAcceptors(1));
+</script>
+{% endblock %}

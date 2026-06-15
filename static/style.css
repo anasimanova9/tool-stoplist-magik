@@ -1,0 +1,39 @@
+body {
+    background-color: #f5f7fa;
+}
+
+.stat-card {
+    transition: transform 0.2s;
+    border-width: 2px;
+}
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.stat-card .card-title {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.table th {
+    white-space: nowrap;
+}
+
+.donor-item {
+    padding: 4px 8px;
+    margin: 2px 0;
+    background: #f8f9fa;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9rem;
+}
+
+.progress-bar {
+    transition: width 0.3s ease;
+}
+
+#errorsContent .error-line {
+    padding: 3px 0;
+    border-bottom: 1px solid #eee;
+    word-break: break-all;
+}

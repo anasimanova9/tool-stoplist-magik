@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Експорт — Стоп-лист донорів{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-download"></i> Експорт стоп-листа</h2>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-globe2"></i> Повний експорт (увесь стоп-лист)</h5>
+    </div>
+    <div class="card-body">
+        <div class="row text-center mb-3">
+            <div class="col-md-4">
+                <span class="fs-5">{{ stats.total_unique_pairs | default(0) }}</span>
+                <br><small class="text-muted">Унікальних пар для експорту</small>
+            </div>
+            <div class="col-md-4">
+                <span class="fs-5">{{ stats.total_acceptors | default(0) }}</span>
+                <br><small class="text-muted">Акцепторів</small>
+            </div>
+            <div class="col-md-4">
+                <span class="fs-5">~{{ ((stats.total_unique_pairs | default(0)) / 1000000 + 1) | int }}</span>
+                <br><small class="text-muted">Файлів Excel (приблизно)</small>
+            </div>
+        </div>
+
+        <div class="alert alert-info small">
+            <i class="bi bi-info-circle"></i>
+            Формат: Колонка A — акцептор (жирний), під ним його донори, порожній рядок, наступний акцептор.
+            Якщо записів більше 1 000 000 — автоматично розбивається на кілька файлів.
+            Файли: <code>stoplist_part_NN.xlsx</code>.
+        </div>
+
+        <button class="btn btn-success btn-lg" id="btnExport" onclick="startExport()">
+            <i class="bi bi-file-earmark-excel"></i> Створити Excel файли
+        </button>
+    </div>
+</div>
+
+<!-- Вибірковий експорт по імпорт-сесіях -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-collection"></i> Експорт окремих імпортів</h5>
+    </div>
+    <div class="card-body">
+        <p class="text-muted small mb-3">
+            Обери імпорт-сесії з останніх запусків — експорт згенерує
+            <strong>окремі</strong> файли <code>stoplist_selected_part_NN.xlsx</code>
+            тільки з рядків цих сесій. Основний пул і повний експорт не зачіпаються.
+        </p>
+        <div id="sessionsList" class="list-group mb-3">
+            <div class="text-muted small p-2">Завантаження...</div>
+        </div>
+        <button class="btn btn-primary" id="btnExportSelected" onclick="startSelectedExport()" disabled>
+            <i class="bi bi-file-earmark-excel"></i> Експортувати вибрані
+        </button>
+    </div>
+</div>
+
+<!-- Прогрес експорту -->
+<div class="card mb-4 d-none" id="exportProgressCard">
+    <div class="card-body">
+        <h5 id="exportProgressTitle"><i class="bi bi-hourglass-split"></i> Експорт...</h5>
+        <div class="progress mb-2" style="height: 25px;">
+            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated"
+                 id="exportProgressBar" role="progressbar" style="width: 0%">0%</div>
+        </div>
+        <p class="text-muted" id="exportProgressText">Підготовка...</p>
+    </div>
+</div>
+
+<!-- Файли для завантаження -->
+{% if existing_files %}
+<div class="card" id="downloadCard">
+    <div class="card-header"><h5 class="mb-0">Готові файли</h5></div>
+    <div class="card-body">
+        <div class="list-group" id="downloadList">
+            {% for f in existing_files %}
+            <a href="/api/export/download/{{ f }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-file-earmark-excel text-success"></i> {{ f }}</span>
+                <span class="badge bg-success"><i class="bi bi-download"></i> Завантажити</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card d-none" id="downloadCard">
+    <div class="card-header"><h5 class="mb-0">Готові файли</h5></div>
+    <div class="card-body">
+        <div class="list-group" id="downloadList"></div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Статистика — Стоп-лист донорів{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-bar-chart"></i> Статистика</h2>
+
+<!-- Глобальна статистика -->
+<div class="card mb-4">
+    <div class="card-header"><h5 class="mb-0">Загальна статистика</h5></div>
+    <div class="card-body">
+        <div class="row text-center" id="globalStats">
+            <div class="col"><span class="fs-4 text-primary">—</span><br><small class="text-muted">Акцепторів</small></div>
+            <div class="col"><span class="fs-4 text-success">—</span><br><small class="text-muted">Унік. донорів</small></div>
+            <div class="col"><span class="fs-4 text-info">—</span><br><small class="text-muted">Унік. пар</small></div>
+            <div class="col"><span class="fs-4 text-warning">—</span><br><small class="text-muted">Всього записів</small></div>
+            <div class="col"><span class="fs-4 text-danger">—</span><br><small class="text-muted">Дублікатів</small></div>
+        </div>
+    </div>
+</div>
+
+<!-- Оброблені ТЗ -->
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Оброблені ТЗ таблиці</h5>
+        <span class="badge bg-secondary" id="tzCount">0</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+            <table class="table table-sm table-hover mb-0">
+                <thead class="table-light sticky-top">
+                    <tr>
+                        <th>#</th>
+                        <th>Назва / URL</th>
+                        <th>Статус</th>
+                        <th>Рядків</th>
+                        <th>Акцепторів</th>
+                        <th>Донорів</th>
+                        <th>Дата</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tzTableBody">
+                    <tr><td colspan="8" class="text-center text-muted">Завантаження...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Статистика по акцепторах (Топ-20) -->
+<div class="card">
+    <div class="card-header"><h5 class="mb-0">Топ-20 акцепторів за кількістю донорів</h5></div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-sm table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Акцептор</th>
+                        <th>Унік. донорів</th>
+                        <th>Всього записів</th>
+                        <th>Дублікатів</th>
+                    </tr>
+                </thead>
+                <tbody id="topAcceptorsBody">
+                    <tr><td colspan="5" class="text-center text-muted">Завантаження...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Кнопка очищення -->
+<div class="mt-4 text-end">
+    <button class="btn btn-outline-danger" onclick="clearAllData()">
+        <i class="bi bi-trash3"></i> Очистити всі дані
+    </button>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', loadStats);
+</script>
+{% endblock %}

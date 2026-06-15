@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Головна — Стоп-лист донорів{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-speedometer2"></i> Панель управління</h2>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card stat-card border-primary">
+            <div class="card-body text-center">
+                <h3 class="card-title text-primary" id="stat-acceptors">{{ stats.total_acceptors | default(0) }}</h3>
+                <p class="card-text text-muted">Унікальних акцепторів</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card border-success">
+            <div class="card-body text-center">
+                <h3 class="card-title text-success" id="stat-donors">{{ stats.total_unique_donors | default(0) }}</h3>
+                <p class="card-text text-muted">Унікальних донорів</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card border-info">
+            <div class="card-body text-center">
+                <h3 class="card-title text-info" id="stat-pairs">{{ stats.total_unique_pairs | default(0) }}</h3>
+                <p class="card-text text-muted">Унікальних пар (акцептор-донор)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card stat-card border-warning">
+            <div class="card-body text-center">
+                <h3 class="card-title text-warning" id="stat-raw">{{ stats.total_raw_records | default(0) }}</h3>
+                <p class="card-text text-muted">Всього записів (з дублями)</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card border-danger">
+            <div class="card-body text-center">
+                <h3 class="card-title text-danger" id="stat-dupes">{{ stats.total_duplicates | default(0) }}</h3>
+                <p class="card-text text-muted">Дублікатів</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card border-secondary">
+            <div class="card-body text-center">
+                <h3 class="card-title text-secondary" id="stat-tz">{{ stats.total_tz_done | default(0) }} / {{ stats.total_tz_all | default(0) }}</h3>
+                <p class="card-text text-muted">Оброблено ТЗ</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5><i class="bi bi-cloud-upload"></i> Швидкий імпорт</h5>
+                <p class="text-muted">Завантажте нові ТЗ для розширення стоп-листа</p>
+                <a href="/import" class="btn btn-primary">Перейти до імпорту</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5><i class="bi bi-download"></i> Експорт</h5>
+                <p class="text-muted">Вивантажити стоп-лист у Excel файли</p>
+                <a href="/export" class="btn btn-success">Перейти до експорту</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
